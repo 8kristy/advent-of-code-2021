@@ -1,3 +1,4 @@
+#[path = "../reader.rs"]
 mod reader;
 
 fn main() {

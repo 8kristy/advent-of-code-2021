@@ -1,6 +1,5 @@
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
+#[path = "../reader.rs"]
+mod reader;
 
 fn main(){
     let mut x:i32 = 0;
@@ -8,7 +7,7 @@ fn main(){
     let mut aim:i32 = 0;
 
     // Read the file line by line
-    if let Ok(lines) = read_lines("./input") {
+    if let Ok(lines) = reader::read_lines("./input") {
         for line in lines {
             if let Ok(ip) = line {
                 // Get the components from the string
@@ -30,11 +29,4 @@ fn main(){
     }
     // Print product of x and y, i.e. our result
     println!("{}", x * y);
-}
-
-// Gets the lines
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where P: AsRef<Path>, {
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
 }
