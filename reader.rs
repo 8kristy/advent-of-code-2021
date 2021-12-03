@@ -18,6 +18,22 @@ pub fn get_input(filename: &str, length: usize) -> Vec<i32> {
     return vec;
 }
 
+#[allow(dead_code)]
+// Reads a file and puts each line as a string in an array which is then returned
+pub fn get_input_strings(filename: &str, length: usize) -> Vec<String> {
+    let mut vec = Vec::with_capacity(length);
+    
+    // Go over lines and convert each to an integer and add it to our vector
+    if let Ok(lines) = read_lines(filename) {
+        for line in lines {
+            if let Ok(ip) = line {
+                vec.push(ip);
+            }
+        }
+    }
+    return vec;
+}
+
 // Gets the lines
 pub fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where P: AsRef<Path>, {
