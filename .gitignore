@@ -1,12 +1,2 @@
-Day 1/part1.exe
-Day 1/part2.exe
-Day 1/input
-Day 2/part2.exe
-Day 2/part1.exe
-Day 2/input
-Day 3/input
-Day 3/part1.exe
-Day 3/part2.exe
-Day 4/input
-Day 4/part1.exe
-Day 4/part2.exe
+*/*.exe
+*/input
