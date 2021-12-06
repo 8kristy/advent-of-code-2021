@@ -19,6 +19,17 @@ pub fn get_input(filename: &str, length: usize) -> Vec<i32> {
 }
 
 #[allow(dead_code)]
+// Reads input if it's one line and splits it into an int vector
+pub fn read_and_split_line(filename: &str, split_sym: &str) -> Vec<i32> {
+    if let Ok(mut lines) = read_lines(filename) {
+        if let Ok(line) = lines.next().unwrap() {
+            return line.split(split_sym).collect::<Vec<&str>>().into_iter().map(|x| x.parse::<i32>().unwrap()).collect();
+        }
+    }
+    return vec![0];
+}
+
+#[allow(dead_code)]
 // Reads a file and puts each line as a string in an array which is then returned
 pub fn get_input_strings(filename: &str, length: usize) -> Vec<String> {
     let mut vec = Vec::with_capacity(length);
