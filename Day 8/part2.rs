@@ -26,47 +26,29 @@ fn main() {
                 // and delete it from patterns to avoid interfering with further numbers
 
                 // 1, 4, 7, 8 known
-                fragments[1] = HashSet::from_iter((&patterns).into_iter().filter(|x| x.len() == 2).collect::<Vec<&&str>>()[0].split(""));
-                patterns.retain(|x| x.len() != 2);
-                fragments[4] = HashSet::from_iter((&patterns).into_iter().filter(|x| x.len() == 4).collect::<Vec<&&str>>()[0].split(""));
-                patterns.retain(|x| x.len() != 4);
-                fragments[7] = HashSet::from_iter((&patterns).into_iter().filter(|x| x.len() == 3).collect::<Vec<&&str>>()[0].split(""));
-                patterns.retain(|x| x.len() != 3);
-                fragments[8] = HashSet::from_iter((&patterns).into_iter().filter(|x| x.len() == 7).collect::<Vec<&&str>>()[0].split(""));
-                patterns.retain(|x| x.len() != 7);
+                fragments[1] = filter_length_delete(&mut patterns, 2);
+                fragments[4] = filter_length_delete(&mut patterns, 4);
+                fragments[7] = filter_length_delete(&mut patterns, 3);
+                fragments[8] = filter_length_delete(&mut patterns, 7);
 
                 // len=6 and overlaps 4 = 9
-                fragments[9] = HashSet::from_iter((&patterns).into_iter()
-                                .filter(|x| x.len() == 6 && fragments[4].is_subset(&HashSet::from_iter(x.split(""))))
-                                .collect::<Vec<&&str>>()[0].split(""));
-                patterns.retain(|x| !(x.len() == 6 && fragments[4].is_subset(&HashSet::from_iter(x.split("")))));
-
+                fragments[9] = filter_length_subset_delete(&mut patterns, &fragments[4], 6);
                 // len=6 and overlaps 1 = 0
-                fragments[0] = HashSet::from_iter((&patterns).into_iter()
-                                .filter(|x| x.len() == 6 && fragments[1].is_subset(&HashSet::from_iter(x.split(""))))
-                                .collect::<Vec<&&str>>()[0].split(""));
-                patterns.retain(|x| !(x.len() == 6 && fragments[1].is_subset(&HashSet::from_iter(x.split("")))));
-
+                fragments[0] = filter_length_subset_delete(&mut patterns, &fragments[1], 6);
                 // len=6 else = 6
-                fragments[6] = HashSet::from_iter((&patterns).into_iter().filter(|x| x.len() == 6).collect::<Vec<&&str>>()[0].split(""));
-                patterns.retain(|x| !(x.len() == 6));
-
+                fragments[6] = filter_length_delete(&mut patterns, 6);
                 // len=5 and overlaps 1 = 3
-                fragments[3] = HashSet::from_iter((&patterns).into_iter()
-                                .filter(|x| x.len() == 5 && fragments[1].is_subset(&HashSet::from_iter(x.split(""))))
-                                .collect::<Vec<&&str>>()[0].split(""));
-                patterns.retain(|x| !(x.len() == 5 && fragments[1].is_subset(&HashSet::from_iter(x.split("")))));
-
+                fragments[3] = filter_length_subset_delete(&mut patterns, &fragments[1], 5);
                 // len=5 and overlaps 6 = 5
+                // Done separately because the subsets are swapped
                 fragments[5] = HashSet::from_iter((&patterns).into_iter()
-                                .filter(|x| x.len() == 5 && HashSet::from_iter(x.split("")).is_subset(&fragments[6]))
-                                .collect::<Vec<&&str>>()[0].split(""));
+                    .filter(|x| x.len() == 5 && HashSet::from_iter(x.split("")).is_subset(&fragments[6]))
+                    .collect::<Vec<&&str>>()[0].split(""));
                 patterns.retain(|x| !(x.len() == 5 && HashSet::from_iter(x.split("")).is_subset(&fragments[6])));
-
                 // len=5 else = 2
-                fragments[2] = HashSet::from_iter((&patterns).into_iter().filter(|x| x.len() == 5).collect::<Vec<&&str>>()[0].split(""));
-
-                // Decoded output
+                fragments[2] = filter_length_delete(&mut patterns, 5);
+             
+                // Decoded outputy
                 let mut num_str:String = "".to_string();
 
                 // Go over output
@@ -87,4 +69,18 @@ fn main() {
     }
     // Print the sum of all outputs
     println!("{}", counter);
+}
+
+// Finds the set with a given size, removes it from patterns and returns it
+fn filter_length_delete<'a>(patterns: &mut Vec<&'a str>, len: usize) -> HashSet<&'a str> {
+    let set = HashSet::from_iter((&patterns).iter().filter(|x| x.len() == len).collect::<Vec<&&str>>()[0].split(""));
+    patterns.retain(|x| x.len() != len);
+    return set;
+}
+
+// Finds the set with a given size and if it's a superset of another, removes it from patterns and returns it
+fn filter_length_subset_delete<'a>(patterns: &mut Vec<&'a str>, set1: &HashSet<&str>, len: usize) -> HashSet<&'a str> {
+    let set = HashSet::from_iter((&patterns).iter().filter(|x| x.len() == len && set1.is_subset(&HashSet::from_iter(x.split("")))).collect::<Vec<&&str>>()[0].split(""));
+    patterns.retain(|x| !(x.len() == len && set1.is_subset(&HashSet::from_iter(x.split("")))));
+    return set;
 }
